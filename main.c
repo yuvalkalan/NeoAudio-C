@@ -10,7 +10,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
-#include "ws2812.pio.h"
+#include "NeoPio.pio.h"
 
 #define IS_RGBW false
 #define NUM_PIXELS 1
@@ -89,9 +89,9 @@ int main() {
     // todo get free sm
     PIO pio = pio0;
     int sm = 0;
-    uint offset = pio_add_program(pio, &ws2812_program);
+    uint offset = pio_add_program(pio, &neopio_program);
 
-    ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
+    neopio_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
     int t = 0;
     while (1) {
