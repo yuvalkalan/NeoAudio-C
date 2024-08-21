@@ -1,3 +1,35 @@
+// #include <iostream>
+// #include <string>
+// #include "LedControl/LedControl.h"
+// #include <memory>
+// using namespace std;
+
+// #define CLOCK_REFRESH_RATE 50.0
+// #define ARRAY_SIZE 50
+
+// void shiftArray(int* arr, int size) {
+// 	for (int i = 0; i < size - 1; i++)
+// 	{
+// 		int offset = size - i - 2;
+// 		*(long long*)((int*)arr + offset) <<= 32;
+// 	}
+// }
+
+
+// int main() {
+// 	int* arr = new int[ARRAY_SIZE];
+// 	for (int i = 0; i < ARRAY_SIZE; i++)
+// 	{
+// 		arr[i] = i + 'A';
+// 	}
+// 	shiftArray(arr, ARRAY_SIZE);
+// 	for (int i = 0; i < ARRAY_SIZE; i++)
+// 	{
+// 		cout << arr[i] << endl;
+// 	}
+// }
+
+
 /**
  * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
  *
@@ -10,6 +42,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+// #include "LedControl/NeoPio/NeoPio.pio.h"
 #include "NeoPio.pio.h"
 
 #define IS_RGBW false
@@ -75,10 +108,10 @@ const struct {
     pattern pat;
     const char *name;
 } pattern_table[] = {
-        {pattern_snakes,  "Snakes!"},
-        {pattern_random,  "Random data"},
+        // {pattern_snakes,  "Snakes!"},
+        // {pattern_random,  "Random data"},
         {pattern_sparkle, "Sparkles"},
-        {pattern_greys,   "Greys"},
+        // {pattern_greys,   "Greys"},
 };
 
 int main() {
@@ -104,5 +137,6 @@ int main() {
             sleep_ms(10);
             t += dir;
         }
+		puts("testing");
     }
 }
