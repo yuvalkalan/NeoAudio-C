@@ -15,7 +15,6 @@
 // 	}
 // }
 
-
 // int main() {
 // 	int* arr = new int[ARRAY_SIZE];
 // 	for (int i = 0; i < ARRAY_SIZE; i++)
@@ -29,7 +28,6 @@
 // 	}
 // }
 
-
 /**
  * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
  *
@@ -42,32 +40,36 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
-// #include "LedControl/NeoPio/NeoPio.pio.h"
 #include "NeoPio.pio.h"
-
 #define IS_RGBW false
-#define NUM_PIXELS 1
+#define NUM_PIXELS 144
 
-#ifdef PICO_DEFAULT_WS2812_PIN
-#define WS2812_PIN PICO_DEFAULT_WS2812_PIN
-#else
 // default to pin 16 if the board doesn't have a default WS2812 pin defined
-#define WS2812_PIN 16
-#endif
+#define WS2812_PIN 0
 
-static inline void put_pixel(uint32_t pixel_grb) {
-    pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
+static inline void init_pio(uint32_t led_count)
+{
+    pio_sm_put_blocking(pio0, 0, led_count - 1);
 }
 
-static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
-    return
-            ((uint32_t) (r) << 8) |
-            ((uint32_t) (g) << 16) |
-            (uint32_t) (b);
+static inline void put_pixel(uint32_t pixel_grb)
+{
+    // puts("sending data...");
+    // printf("%d", pixel_grb);
+    pio_sm_put_blocking(pio0, 0, pixel_grb);
 }
 
-void pattern_snakes(uint len, uint t) {
-    for (uint i = 0; i < len; ++i) {
+static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((uint32_t)(r) << 8) |
+           ((uint32_t)(g) << 16) |
+           (uint32_t)(b);
+}
+
+void pattern_snakes(uint len, uint t)
+{
+    for (uint i = 0; i < len; ++i)
+    {
         uint x = (i + (t >> 1)) % 64;
         if (x < 10)
             put_pixel(urgb_u32(0xff, 0, 0));
@@ -80,43 +82,51 @@ void pattern_snakes(uint len, uint t) {
     }
 }
 
-void pattern_random(uint len, uint t) {
-    if (t % 8)
-        return;
+void pattern_random(uint len, uint t)
+{
+    // if (t % 8)
+    //     return;
     for (int i = 0; i < len; ++i)
         put_pixel(rand());
 }
 
-void pattern_sparkle(uint len, uint t) {
-    if (t % 8)
-        return;
+void pattern_sparkle(uint len, uint t)
+{
+    // if (t % 8)
+    //     return;
     for (int i = 0; i < len; ++i)
         put_pixel(rand() % 16 ? 0 : 0xffffffff);
 }
 
-void pattern_greys(uint len, uint t) {
+void pattern_greys(uint len, uint t)
+{
     int max = 100; // let's not draw too much current!
     t %= max;
-    for (int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i)
+    {
         put_pixel(t * 0x10101);
-        if (++t >= max) t = 0;
+        if (++t >= max)
+            t = 0;
     }
 }
 
 typedef void (*pattern)(uint len, uint t);
-const struct {
+const struct
+{
     pattern pat;
     const char *name;
 } pattern_table[] = {
-        // {pattern_snakes,  "Snakes!"},
-        // {pattern_random,  "Random data"},
-        {pattern_sparkle, "Sparkles"},
-        // {pattern_greys,   "Greys"},
+    {pattern_snakes, "Snakes!"},
+    // {pattern_random, "Random data"},
+    // {pattern_sparkle, "Sparkles"},
+    // {pattern_greys, "Greys"},
 };
 
-int main() {
-    //set_sys_clock_48();
+int main()
+{
+    // set_sys_clock_48();
     stdio_init_all();
+    sleep_ms(3000);
     printf("WS2812 Smoke Test, using pin %d", WS2812_PIN);
 
     // todo get free sm
@@ -124,19 +134,24 @@ int main() {
     int sm = 0;
     uint offset = pio_add_program(pio, &neopio_program);
 
-    neopio_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
-
+    neopio_program_init(pio, sm, offset, WS2812_PIN);
+    // pio_sm_put_blocking(pio, sm, (NUM_PIXELS - 1));
+    // init_pio(NUM_PIXELS);
     int t = 0;
-    while (1) {
+    while (1)
+    {
+        // while (pio_interrupt_get(pio, 0));
         int pat = rand() % count_of(pattern_table);
         int dir = (rand() >> 30) & 1 ? 1 : -1;
         puts(pattern_table[pat].name);
         puts(dir == 1 ? "(forward)" : "(backward)");
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 1000; ++i)
+        {
             pattern_table[pat].pat(NUM_PIXELS, t);
-            sleep_ms(10);
+            sleep_ms(1);
             t += dir;
         }
-		puts("testing");
+        puts("testing");
+        // sleep_ms(1000);
     }
 }
