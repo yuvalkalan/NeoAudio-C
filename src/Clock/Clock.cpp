@@ -5,11 +5,13 @@ Clock::Clock(double refresh_rate) : m_refresh_rate(refresh_rate), m_frequency(1.
 	m_last_frame_time = std::chrono::high_resolution_clock::now();
 }
 
-double Clock::tick() {
+double Clock::tick()
+{
 	auto current_time = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = current_time - m_last_frame_time;
 	double elapsed_seconds = elapsed.count();
-	while ((elapsed_seconds + m_delta) < m_frequency) {
+	while ((elapsed_seconds + m_delta) < m_frequency)
+	{
 		current_time = std::chrono::high_resolution_clock::now();
 		elapsed = current_time - m_last_frame_time;
 		elapsed_seconds = elapsed.count();

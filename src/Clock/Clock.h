@@ -1,7 +1,8 @@
 #pragma once
 #include <chrono>
 
-class Clock {
+class Clock
+{
 private:
 	double m_refresh_rate;
 	double m_frequency;
@@ -12,5 +13,4 @@ public:
 	Clock(double refresh_rate);
 
 	double tick();
-
 };

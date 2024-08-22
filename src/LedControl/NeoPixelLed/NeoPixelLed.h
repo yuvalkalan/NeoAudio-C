@@ -9,7 +9,6 @@ enum Color
 	BLUE = 0x0000ff
 };
 
-
 class NeoPixelLed
 {
 private:

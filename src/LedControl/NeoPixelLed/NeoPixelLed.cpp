@@ -1,6 +1,5 @@
 #include "NeoPixelLed.h"
 
-
 NeoPixelLed::NeoPixelLed()
 	: m_color(Color::BLACK), m_rtl(true), m_index(0)
 {

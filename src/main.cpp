@@ -1,69 +1,33 @@
-// #include <iostream>
-// #include <string>
-// #include "LedControl/LedControl.h"
-// #include <memory>
-// using namespace std;
-
-// #define CLOCK_REFRESH_RATE 50.0
-// #define ARRAY_SIZE 50
-
-// void shiftArray(int* arr, int size) {
-// 	for (int i = 0; i < size - 1; i++)
-// 	{
-// 		int offset = size - i - 2;
-// 		*(long long*)((int*)arr + offset) <<= 32;
-// 	}
-// }
-
-// int main() {
-// 	int* arr = new int[ARRAY_SIZE];
-// 	for (int i = 0; i < ARRAY_SIZE; i++)
-// 	{
-// 		arr[i] = i + 'A';
-// 	}
-// 	shiftArray(arr, ARRAY_SIZE);
-// 	for (int i = 0; i < ARRAY_SIZE; i++)
-// 	{
-// 		cout << arr[i] << endl;
-// 	}
-// }
-
-/**
- * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+#include "hardware/dma.h"
 #include "NeoPio.pio.h"
-#define IS_RGBW false
+#include "LedControl/LedControl.h"
+#include "Clock/Clock.h"
+
 #define NUM_PIXELS 144
+#define WS2812_PIN 0 // default to pin 0
+#define CLOCK_REFRESH_RATE 200.0
 
-// default to pin 16 if the board doesn't have a default WS2812 pin defined
-#define WS2812_PIN 0
+const float brightness = 0.020f;
 
-static inline void init_pio(uint32_t led_count)
+static void shiftArray(int32_t *arr, int32_t size)
 {
-    pio_sm_put_blocking(pio0, 0, led_count - 1);
-}
-
-static inline void put_pixel(uint32_t pixel_grb)
-{
-    // puts("sending data...");
-    // printf("%d", pixel_grb);
-    pio_sm_put_blocking(pio0, 0, pixel_grb);
+    for (int i = 0; i < size - 1; i++)
+    {
+        int offset = size - i - 2;
+        *(long long *)((int *)arr + offset) <<= 32;
+    }
 }
 
 static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b)
 {
-    return ((uint32_t)(r) << 8) |
-           ((uint32_t)(g) << 16) |
-           (uint32_t)(b);
+    return ((uint32_t)(r * brightness) << 8) |
+           ((uint32_t)(g * brightness) << 16) |
+           (uint32_t)(b * brightness);
 }
 
 void pattern_snakes(uint len, uint t)
@@ -72,61 +36,29 @@ void pattern_snakes(uint len, uint t)
     {
         uint x = (i + (t >> 1)) % 64;
         if (x < 10)
-            put_pixel(urgb_u32(0xff, 0, 0));
+            led_buffer[i] = urgb_u32(0xff, 0, 0);
         else if (x >= 15 && x < 25)
-            put_pixel(urgb_u32(0, 0xff, 0));
+            led_buffer[i] = urgb_u32(0, 0xff, 0);
         else if (x >= 30 && x < 40)
-            put_pixel(urgb_u32(0, 0, 0xff));
+            led_buffer[i] = urgb_u32(0, 0, 0xff);
         else
-            put_pixel(0);
-    }
-}
-
-void pattern_random(uint len, uint t)
-{
-    // if (t % 8)
-    //     return;
-    for (int i = 0; i < len; ++i)
-        put_pixel(rand());
-}
-
-void pattern_sparkle(uint len, uint t)
-{
-    // if (t % 8)
-    //     return;
-    for (int i = 0; i < len; ++i)
-        put_pixel(rand() % 16 ? 0 : 0xffffffff);
-}
-
-void pattern_greys(uint len, uint t)
-{
-    int max = 100; // let's not draw too much current!
-    t %= max;
-    for (int i = 0; i < len; ++i)
-    {
-        put_pixel(t * 0x10101);
-        if (++t >= max)
-            t = 0;
+            led_buffer[i] = 0;
     }
 }
 
 typedef void (*pattern)(uint len, uint t);
-const struct
-{
-    pattern pat;
-    const char *name;
-} pattern_table[] = {
-    {pattern_snakes, "Snakes!"},
-    // {pattern_random, "Random data"},
-    // {pattern_sparkle, "Sparkles"},
-    // {pattern_greys, "Greys"},
-};
-
 int main()
 {
     // set_sys_clock_48();
     stdio_init_all();
     sleep_ms(3000);
+    Clock clk(CLOCK_REFRESH_RATE);
+    const int led_dma_chan = 0;
+    dma_channel_config dma_ch0 = dma_channel_get_default_config(led_dma_chan);
+    channel_config_set_transfer_data_size(&dma_ch0, DMA_SIZE_32);
+    channel_config_set_read_increment(&dma_ch0, true);
+    channel_config_set_write_increment(&dma_ch0, false);
+    channel_config_set_dreq(&dma_ch0, DREQ_PIO0_TX0);
     printf("WS2812 Smoke Test, using pin %d", WS2812_PIN);
 
     // todo get free sm
@@ -141,17 +73,23 @@ int main()
     while (1)
     {
         // while (pio_interrupt_get(pio, 0));
-        int pat = rand() % count_of(pattern_table);
         int dir = (rand() >> 30) & 1 ? 1 : -1;
-        puts(pattern_table[pat].name);
         puts(dir == 1 ? "(forward)" : "(backward)");
-        for (int i = 0; i < 1000; ++i)
+        uint64_t a = time_us_64();
+        // pattern_table[pat].pat(NUM_PIXELS, t);
+        for (int i = 0; i < 144; ++i)
         {
-            pattern_table[pat].pat(NUM_PIXELS, t);
-            sleep_ms(1);
+            pattern_snakes(NUM_PIXELS, t);
+            // initiate DMA transfer
+            // shiftArray(led_buffer, NUM_PIXELS);
+            dma_channel_configure(led_dma_chan, &dma_ch0, &pio->txf[sm], led_buffer, NUM_PIXELS, true);
+            dma_channel_wait_for_finish_blocking(led_dma_chan);
+            sleep_us(300);
             t += dir;
+            clk.tick();
         }
-        puts("testing");
+        uint64_t b = time_us_64();
+        printf("Time difference: %f seconds\n", (b - a) / 1000000.0);
         // sleep_ms(1000);
     }
 }
