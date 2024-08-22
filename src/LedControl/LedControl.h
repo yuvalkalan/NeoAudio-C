@@ -1,12 +1,22 @@
 #pragma once
 #include "NeoPixelLed/NeoPixelLed.h"
-#include "NeoPio/NeoPio.h"
-#define NUM_PIXELS 144
 
-int32_t led_buffer[NUM_PIXELS];
+#include <vector>
+
 class LedControl
 {
 private:
+	std::vector<NeoPixelLed> leds;
+
+public:
 	NeoPio pio;
-	int *m_buffer;
+
+private:
+	void start(bool direction);
+	void clear();
+	void set_buffer();
+
+public:
+	LedControl();
+	void update(int index);
 };

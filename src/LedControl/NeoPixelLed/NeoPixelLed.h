@@ -1,6 +1,5 @@
 #pragma once
-#define NUM_OF_PIXELS 144
-
+#include "NeoPio/NeoPio.h"
 enum Color
 {
 	BLACK = 0x000000,
@@ -20,7 +19,6 @@ private:
 	bool alive() const;
 
 public:
-	NeoPixelLed();
 	NeoPixelLed(int color, bool rtl);
 	bool update();
 	int color() const;

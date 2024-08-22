@@ -16,7 +16,13 @@ pico_sdk_init()
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/Clock/Clock.cpp)
+target_sources(${PROJECT_NAME} PRIVATE 
+                src/main.cpp
+                src/Clock/Clock.cpp
+                src/LedControl/LedControl.cpp 
+                src/LedControl/NeoPixelLed/NeoPixelLed.cpp
+                src/LedControl/NeoPixelLed/NeoPio/NeoPio.cpp
+                )
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -25,7 +31,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         hardware_dma
         )
 # Create pio header files
-pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/src/LedControl/NeoPio/NeoPio.pio)
+pico_generate_pio_header(${PROJECT_NAME} 
+                         ${CMAKE_CURRENT_LIST_DIR}/src/LedControl/NeoPixelLed/NeoPio/NeoPio.pio)
 
 # Enable usb output, disable uart output
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
