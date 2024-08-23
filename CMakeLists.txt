@@ -18,10 +18,12 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 target_sources(${PROJECT_NAME} PRIVATE 
                 src/main.cpp
+                src/BlinkLed/BlinkLed.cpp
                 src/Clock/Clock.cpp
                 src/LedControl/LedControl.cpp 
                 src/LedControl/NeoPixelLed/NeoPixelLed.cpp
                 src/LedControl/NeoPixelLed/NeoPio/NeoPio.cpp
+                src/LedControl/Settings/Settings.cpp
                 )
 
 # Link to pico_stdlib (gpio, time, etc. functions)
@@ -29,6 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         pico_stdlib
         hardware_pio
         hardware_dma
+        hardware_flash
         )
 # Create pio header files
 pico_generate_pio_header(${PROJECT_NAME} 

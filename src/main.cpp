@@ -4,7 +4,7 @@
 #include "hardware/clocks.h"
 #include "LedControl/LedControl.h"
 #include "Clock/Clock.h"
-
+#include "BlinkLed/BlinkLed.h"
 #define CLOCK_REFRESH_RATE 200.0
 
 const float brightness = 0.020f;
@@ -30,16 +30,17 @@ typedef void (*pattern)(uint len, uint t);
 int main()
 {
     stdio_init_all();
-    sleep_ms(3000);
+    sleep_ms(1000);
+    BlinkLed led;
     Clock clk(CLOCK_REFRESH_RATE);
     int t = 0;
     while (1)
     {
+        led.update();
         LedCtrl.update(t);
         LedCtrl.pio.write();
         LedCtrl.pio.wait_until_finish();
         t += 1;
-        sleep_us(500);
-        printf("delta time %f\n", clk.tick());
+        clk.tick();
     }
 }
