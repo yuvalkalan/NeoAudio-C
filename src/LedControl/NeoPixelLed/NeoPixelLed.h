@@ -11,7 +11,7 @@ enum Color
 class NeoPixelLed
 {
 private:
-	int m_color;
+	Color m_color;
 	bool m_rtl;
 	int m_index;
 
@@ -19,8 +19,8 @@ private:
 	bool alive() const;
 
 public:
-	NeoPixelLed(int color, bool rtl);
+	NeoPixelLed(Color color, bool rtl);
 	bool update();
-	int color() const;
+	Color color() const;
 	int index() const;
 };

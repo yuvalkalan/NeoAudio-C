@@ -5,7 +5,7 @@
 // {
 // }
 
-NeoPixelLed::NeoPixelLed(int color, bool rtl)
+NeoPixelLed::NeoPixelLed(Color color, bool rtl)
 	: m_color(color), m_rtl(rtl), m_index(0)
 {
 }
@@ -16,7 +16,7 @@ bool NeoPixelLed::update()
 	return this->alive();
 }
 
-int NeoPixelLed::color() const
+Color NeoPixelLed::color() const
 {
 	return this->m_color;
 }
