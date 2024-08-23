@@ -16,7 +16,9 @@ Settings::Settings()
         read();
     }
     else
+    {
         printf("settings file not found!\n");
+    }
 }
 void Settings::read()
 {
@@ -48,7 +50,7 @@ Mode Settings::get_mode()
 }
 void Settings::update_mode()
 {
-    Mode m_mode = (Mode)(((int)m_mode + 1) % Mode::LENGTH);
+    m_mode = (Mode)(((int)m_mode + 1) % Mode::LENGTH);
     if (m_mode == Mode::CONFIG_SENSITIVITY)
         m_config_temp_value = m_sensitivity;
     else if (m_mode == Mode::CONFIG_BRIGHTNESS)

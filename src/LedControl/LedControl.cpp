@@ -1,6 +1,6 @@
 #include "LedControl.h"
 
-LedControl::LedControl() : pio()
+LedControl::LedControl() : settings(), pio()
 {
 }
 
@@ -40,8 +40,8 @@ void LedControl::clear()
 void LedControl::update(int index)
 {
     this->clear();
-    if (index % 50 == 0)
-        this->start((index / 50) % 2 == 0);
+    if (index % 5 == 0)
+        this->start((index / 5) % 2 == 0);
 
     this->set_buffer();
 }

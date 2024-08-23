@@ -1,6 +1,6 @@
 #pragma once
 #include "NeoPixelLed/NeoPixelLed.h"
-
+#include "Settings/Settings.h"
 #include <vector>
 
 class LedControl
@@ -10,6 +10,7 @@ private:
 
 public:
 	NeoPio pio;
+	Settings settings;
 
 private:
 	void start(bool direction);
