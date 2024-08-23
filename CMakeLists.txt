@@ -24,6 +24,7 @@ target_sources(${PROJECT_NAME} PRIVATE
                 src/LedControl/NeoPixelLed/NeoPixelLed.cpp
                 src/LedControl/NeoPixelLed/NeoPio/NeoPio.cpp
                 src/LedControl/Settings/Settings.cpp
+                src/AnalogRead/AnalogRead.cpp
                 )
 
 # Link to pico_stdlib (gpio, time, etc. functions)
@@ -32,6 +33,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         hardware_pio
         hardware_dma
         hardware_flash
+        hardware_adc
         )
 # Create pio header files
 pico_generate_pio_header(${PROJECT_NAME} 
