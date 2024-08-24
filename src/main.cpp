@@ -67,35 +67,36 @@ void core1()
     }
 }
 
-int main()
-{
-    stdio_init_all();
-    adc_init();
-    sleep_ms(1000);
-    multicore_launch_core1(core1);
-    core0();
-}
-
 // int main()
 // {
 //     stdio_init_all();
 //     adc_init();
-
-//     int counter = 0;
-//     AnalogRead analog_right(GPIO_ANALOG_RIGHT);
-//     AnalogRead analog_left(GPIO_ANALOG_LEFT);
-//     while (1)
-//     {
-//         analog_right.read();
-//         analog_left.read();
-//         counter += 1;
-//         sleep_ms(1);
-//         if (counter % 500 == 0)
-//         {
-//             counter = 0;
-//             printf("right avg: %f, right max: %d left avg: %f, left max: %d\n", analog_right.get_avg(), analog_right.get_max(), analog_left.get_avg(), analog_left.get_max());
-//             analog_right.reset();
-//             analog_left.reset();
-//         }
-//     }
+//     sleep_ms(1000);
+//     multicore_launch_core1(core1);
+//     core0();
 // }
+
+#include "Rotary/Button/Button.h"
+
+int main()
+{
+    stdio_init_all();
+    sleep_ms(1000);
+    Button b(16);
+    while (1)
+    {
+        b.update();
+        if (b.clicked())
+        {
+            printf("clicked!\n");
+        }
+        if (b.double_clicked())
+        {
+            printf("double clicked!\n");
+        }
+        if (b.hold_down())
+        {
+            printf("hold!\n");
+        }
+    }
+}
