@@ -7,14 +7,14 @@ class Rotary
 private:
     int m_clk;
     int m_dt;
-    int m_clk_last_value;
-    int spin;
-    Button y;
+    bool m_clk_last_value;
+    int m_spin;
 
 public:
-    Rotary();
-};
+    Button btn;
 
-Rotary::Rotary()
-{
-}
+public:
+    Rotary(int clk, int dt, int button);
+    void update();
+    int get_spin();
+};
