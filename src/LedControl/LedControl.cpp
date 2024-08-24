@@ -24,9 +24,9 @@ void LedControl::set_buffer()
     }
 }
 
-void LedControl::start(bool direction)
+void LedControl::start(bool rtl)
 {
-    leds.push_back({Color::RED, direction});
+    leds.push_back({Color::RED, rtl});
 }
 
 void LedControl::clear()
@@ -37,11 +37,14 @@ void LedControl::clear()
     }
 }
 
-void LedControl::update(int index)
+void LedControl::update(int right_avg, int right_max, int left_avg, int left_max)
 {
+    this->pio.wait_until_finish();
     this->clear();
-    if (index % 5 == 0)
-        this->start((index / 5) % 2 == 0);
-
+    float real_volume_threshold = settings.get_volume_threshold() / 100.0f * MAX_VOLUME_THRESHOLD;
+    if (right_max > real_volume_threshold)
+        this->start(true);
+    if (left_max > real_volume_threshold)
+        this->start(false);
     this->set_buffer();
 }

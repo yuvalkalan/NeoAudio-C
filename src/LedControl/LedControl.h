@@ -19,5 +19,5 @@ private:
 
 public:
 	LedControl();
-	void update(int index);
+	void update(int right_avg, int right_max, int left_avg, int left_max);
 };
