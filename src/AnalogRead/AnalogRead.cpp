@@ -1,6 +1,6 @@
 #include "AnalogRead.h"
 
-AnalogRead::AnalogRead(int adc_gpio) : m_adc_gpio(adc_gpio)
+AnalogRead::AnalogRead(int adc_gpio) : m_adc_gpio(adc_gpio), m_sum(0), m_counter(0), m_max(0)
 {
     // Make sure GPIO is high-impedance, no pullups etc
     adc_gpio_init(adc_gpio);

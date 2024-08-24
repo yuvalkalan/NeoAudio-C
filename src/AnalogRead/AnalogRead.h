@@ -4,9 +4,9 @@ class AnalogRead
 {
 private:
     int m_adc_gpio;
-    int m_sum = 0;
-    int m_counter = 0;
-    int m_max = 0;
+    int m_sum;
+    int m_counter;
+    int m_max;
 
 private:
     void add(int value);

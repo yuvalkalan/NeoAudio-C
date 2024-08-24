@@ -16,7 +16,7 @@ private:
     dma_channel_config dma_config;
 
 public:
-    int32_t buffer[NUM_PIXELS];
+    uint32_t buffer[NUM_PIXELS];
     NeoPio();
     void write();
     void wait_until_finish();

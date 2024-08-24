@@ -51,11 +51,11 @@ uint8_t inline fix_percent(uint8_t value)
 class Settings
 {
 private:
-    Mode m_mode = Mode::SOUND_BAR;
-    uint8_t m_max_bright = DEF_MAX_BRIGHT;
-    uint8_t m_sensitivity = DEF_SENSITIVITY;
-    uint8_t m_volume_threshold = DEF_VOLUME_THRESHOLD;
-    uint8_t m_config_temp_value = 0;
+    Mode m_mode;
+    uint8_t m_max_bright;
+    uint8_t m_sensitivity;
+    uint8_t m_volume_threshold;
+    uint8_t m_config_temp_value;
 
 private:
     // file operation
@@ -68,9 +68,9 @@ public:
     // getters
     Mode get_mode();
     uint8_t get_config_temp_value();
-    uint8_t get_volume_threshold();
-    uint8_t get_max_bright();
-    uint8_t get_sensitivity();
+    int get_volume_threshold();
+    int get_max_bright();
+    int get_sensitivity();
     // setters
     void reset();
     void update_mode();

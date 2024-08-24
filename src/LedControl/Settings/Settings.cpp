@@ -8,7 +8,7 @@ void enable_usb(bool enable)
 void enable_usb(bool enable) {}
 #endif
 
-Settings::Settings()
+Settings::Settings() : m_mode(Mode::SOUND_BAR), m_max_bright(DEF_MAX_BRIGHT), m_sensitivity(DEF_SENSITIVITY), m_volume_threshold(DEF_VOLUME_THRESHOLD), m_config_temp_value(0)
 {
     if (exist())
     {
@@ -63,7 +63,7 @@ void Settings::update_mode()
 }
 void Settings::reset()
 {
-    printf("reset settings!");
+    printf("reset settings!\n");
     enable_usb(false);
     uint32_t ints = save_and_disable_interrupts();
     flash_range_erase(SETTINGS_WRITE_START, FLASH_SECTOR_SIZE);
@@ -77,17 +77,20 @@ uint8_t Settings::get_config_temp_value()
 {
     return m_config_temp_value;
 }
-uint8_t Settings::get_volume_threshold()
+int Settings::get_volume_threshold()
 {
-    return m_volume_threshold;
+    // return volumn threshold between 0 and MAX_VOLUME_THRESHOLD
+    return m_volume_threshold / 100.0f * MAX_VOLUME_THRESHOLD;
 }
-uint8_t Settings::get_max_bright()
+int Settings::get_max_bright()
 {
-    return m_max_bright;
+    // return brightness between 0 and MAX_BRIGHTNESS
+    return m_max_bright / 100.0f * MAX_BRIGHTNESS;
 }
-uint8_t Settings::get_sensitivity()
+int Settings::get_sensitivity()
 {
-    return m_sensitivity;
+    // return sensitivity between 0 and MAX_SENSITIVITY
+    return m_sensitivity / 100.0f * MAX_SENSITIVITY;
 }
 
 void Settings::set_config_temp_value(uint8_t value)

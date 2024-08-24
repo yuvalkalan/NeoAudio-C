@@ -1,11 +1,6 @@
 #include "NeoPixelLed.h"
 
-// NeoPixelLed::NeoPixelLed()
-// 	: m_color(Color::BLACK), m_rtl(true), m_index(0)
-// {
-// }
-
-NeoPixelLed::NeoPixelLed(Color color, bool rtl)
+NeoPixelLed::NeoPixelLed(uint32_t color, bool rtl)
 	: m_color(color), m_rtl(rtl), m_index(0)
 {
 }
@@ -16,7 +11,7 @@ bool NeoPixelLed::update()
 	return this->alive();
 }
 
-Color NeoPixelLed::color() const
+uint32_t NeoPixelLed::color() const
 {
 	return this->m_color;
 }
