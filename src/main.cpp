@@ -10,7 +10,7 @@
 #include "AnalogRead/AnalogRead.h"
 #include "Rotary/Rotary.h"
 
-#define CLOCK_REFRESH_RATE 50   // 200  // 200.0
+#define CLOCK_REFRESH_RATE 200  // 200.0
 #define READ_REFRESH_RATE 10000 // 10kHz
 #define GPIO_ANALOG_RIGHT 27    // aux right channel pin
 #define GPIO_ANALOG_LEFT 28     // aux left channel pin
@@ -37,7 +37,7 @@ void core0()
     BlinkLed led;
     Clock clk(CLOCK_REFRESH_RATE);
     LedControl led_ctrl;
-    // led_ctrl.settings.update_mode();
+    led_ctrl.settings.update_mode();
     multicore_lockout_victim_init();
     while (true)
     {
