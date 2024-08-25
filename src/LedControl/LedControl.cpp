@@ -85,14 +85,6 @@ void LedControl::update_sound_route(int right_avg, int right_max, int left_avg, 
         this->start(false);
     this->set_buffer();
 }
-void LedControl::update_random_colors(int right_avg, int right_max, int left_avg, int left_max)
-{
-    if (right_max > settings.get_volume_threshold())
-        this->start(true);
-    if (left_max > settings.get_volume_threshold())
-        this->start(false);
-    this->set_buffer();
-}
 
 void LedControl::update_random_colors(int right_avg, int right_max, int left_avg, int left_max)
 {
