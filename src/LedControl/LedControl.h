@@ -2,6 +2,7 @@
 #include "NeoPixelLed/NeoPixelLed.h"
 #include "Settings/Settings.h"
 #include <vector>
+#include <algorithm>
 #define COLOR_DURATION 0.2
 #define UPDATE_PARAMS int right_avg, int right_max, int left_avg, int left_max
 #define UPDATE_VALUES right_avg, right_max, left_avg, left_max

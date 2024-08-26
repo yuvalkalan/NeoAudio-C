@@ -12,8 +12,8 @@
 
 #define CLOCK_REFRESH_RATE 200  // 200.0
 #define READ_REFRESH_RATE 10000 // 10kHz
-#define GPIO_ANALOG_RIGHT 27    // aux right channel pin
-#define GPIO_ANALOG_LEFT 28     // aux left channel pin
+#define GPIO_ANALOG_RIGHT 28    // aux right channel pin
+#define GPIO_ANALOG_LEFT 27     // aux left channel pin
 #define GPIO_CLK_PIN 17         // rotary clk pin
 #define GPIO_DT_PIN 18          // rotary dt pin
 #define GPIO_BUTTON_PIN 16      // rotary button pin
@@ -39,10 +39,6 @@ void core0()
     LedControl led_ctrl;
     multicore_lockout_victim_init();
     led_ctrl.settings.update_mode();
-    led_ctrl.settings.update_mode();
-    led_ctrl.settings.update_mode();
-    led_ctrl.settings.update_mode();
-
     while (true)
     {
         led.update();

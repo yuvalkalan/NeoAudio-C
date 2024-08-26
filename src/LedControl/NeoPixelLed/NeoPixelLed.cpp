@@ -7,21 +7,21 @@ NeoPixelLed::NeoPixelLed(uint32_t color, bool rtl)
 
 bool NeoPixelLed::update()
 {
-	this->m_index += 1;
-	return this->alive();
+	m_index += 1;
+	return alive();
 }
 
 uint32_t NeoPixelLed::color() const
 {
-	return this->m_color;
+	return m_color;
 }
 
 int NeoPixelLed::index() const
 {
-	return this->m_rtl ? this->m_index : NUM_PIXELS - m_index - 1;
+	return m_rtl ? m_index : NUM_PIXELS - m_index - 1;
 }
 
 bool NeoPixelLed::alive() const
 {
-	return this->m_index < NUM_PIXELS / 2;
+	return m_index < NUM_PIXELS / 2;
 }

@@ -12,16 +12,10 @@ void LedControl::set_buffer()
         pio.buffer[m_leds[i].index()] = m_leds[i].color();
     }
     // update and remove m_leds
-    std::vector<int> to_remove;
-    for (int i = 0; i < m_leds.size(); i++)
-    {
-        if (!m_leds[i].update())
-            to_remove.push_back(i);
-    }
-    for (int i = 0; i < to_remove.size(); i++)
-    {
-        m_leds.erase(m_leds.begin() + to_remove[i]);
-    }
+    m_leds.erase(std::remove_if(m_leds.begin(), m_leds.end(),
+                                [](NeoPixelLed &obj)
+                                { return !obj.update(); }),
+                 m_leds.end());
 }
 
 void LedControl::start(bool rtl)
