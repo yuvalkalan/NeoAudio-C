@@ -39,7 +39,7 @@ enum Mode
     LENGTH // always set this item to be last!
 };
 
-uint8_t inline fix_percent(uint8_t value)
+uint8_t inline fix_percent(int value)
 {
     if (value < 0)
         return 0;
@@ -74,8 +74,8 @@ public:
     // setters
     void reset();
     void update_mode();
-    void set_config_temp_value(uint8_t value);
-    void set_volume_threshold(uint8_t value);
-    void set_max_bright(uint8_t value);
-    void set_sensitivity(uint8_t value);
+    void set_config_temp_value(int value);
+    void set_volume_threshold(int value);
+    void set_max_bright(int value);
+    void set_sensitivity(int value);
 };

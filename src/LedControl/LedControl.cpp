@@ -37,27 +37,27 @@ void LedControl::clear()
     }
 }
 
-void LedControl::update(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update(UPDATE_PARAMS)
 {
     this->clear();
     Mode mode = settings.get_mode();
     // TODO: replace with map!
     if (mode == SOUND_BAR)
-        update_sound_bar(right_avg, right_max, left_avg, left_max);
+        update_sound_bar(UPDATE_VALUES);
     else if (mode == SOUND_ROUTE)
-        update_sound_route(right_avg, right_max, left_avg, left_max);
+        update_sound_route(UPDATE_VALUES);
     else if (mode == RANDOM_COLOR)
-        update_random_colors(right_avg, right_max, left_avg, left_max);
+        update_random_colors(UPDATE_VALUES);
     else if (mode == CONFIG_BRIGHTNESS)
-        update_config_brightness(right_avg, right_max, left_avg, left_max);
+        update_config_brightness(UPDATE_VALUES);
     else if (mode == CONFIG_SENSITIVITY)
-        update_config_sensitivity(right_avg, right_max, left_avg, left_max);
+        update_config_sensitivity(UPDATE_VALUES);
     else if (mode == CONFIG_VOLUME_THRESH)
-        update_config_volume_thresh(right_avg, right_max, left_avg, left_max);
+        update_config_volume_thresh(UPDATE_VALUES);
     else if (mode == OFF)
-        update_off(right_avg, right_max, left_avg, left_max);
+        update_off(UPDATE_VALUES);
 }
-void LedControl::update_sound_bar(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_sound_bar(UPDATE_PARAMS)
 {
     // right
     int right_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * right_avg / 65535);
@@ -77,7 +77,7 @@ void LedControl::update_sound_bar(int right_avg, int right_max, int left_avg, in
         pio.buffer[NUM_PIXELS - 1 - i] = (c << 8) | ((settings.get_max_bright() - c) << 16);
     }
 }
-void LedControl::update_sound_route(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_sound_route(UPDATE_PARAMS)
 {
     if (right_max > settings.get_volume_threshold())
         this->start(true);
@@ -86,21 +86,27 @@ void LedControl::update_sound_route(int right_avg, int right_max, int left_avg, 
     this->set_buffer();
 }
 
-void LedControl::update_random_colors(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_random_colors(UPDATE_PARAMS)
 {
     this->start(true);
     this->start(false);
     this->set_buffer();
 }
-void LedControl::update_config_brightness(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_config_brightness(UPDATE_PARAMS)
+{
+    printf("temp value is %d\n", settings.get_config_temp_value());
+    uint8_t v = 255 * settings.get_config_temp_value() / 100;
+    for (int i = 0; i < NUM_PIXELS; i++)
+    {
+        pio.buffer[i] = (v << 16) | (v << 8) | v;
+    }
+}
+void LedControl::update_config_sensitivity(UPDATE_PARAMS)
 {
 }
-void LedControl::update_config_sensitivity(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_config_volume_thresh(UPDATE_PARAMS)
 {
 }
-void LedControl::update_config_volume_thresh(int right_avg, int right_max, int left_avg, int left_max)
-{
-}
-void LedControl::update_off(int right_avg, int right_max, int left_avg, int left_max)
+void LedControl::update_off(UPDATE_PARAMS)
 {
 }

@@ -93,22 +93,21 @@ int Settings::get_sensitivity()
     return m_sensitivity / 100.0f * MAX_SENSITIVITY;
 }
 
-void Settings::set_config_temp_value(uint8_t value)
+void Settings::set_config_temp_value(int value)
 {
     m_config_temp_value = fix_percent(value);
-    write();
 }
-void Settings::set_volume_threshold(uint8_t value)
+void Settings::set_volume_threshold(int value)
 {
     m_volume_threshold = fix_percent(value);
     write();
 }
-void Settings::set_max_bright(uint8_t value)
+void Settings::set_max_bright(int value)
 {
     m_max_bright = fix_percent(value);
     write();
 }
-void Settings::set_sensitivity(uint8_t value)
+void Settings::set_sensitivity(int value)
 {
     m_sensitivity = fix_percent(value);
     write();

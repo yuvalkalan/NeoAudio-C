@@ -37,12 +37,14 @@ void core0()
     BlinkLed led;
     Clock clk(CLOCK_REFRESH_RATE);
     LedControl led_ctrl;
-    led_ctrl.settings.update_mode();
     multicore_lockout_victim_init();
     while (true)
     {
         led.update();
         multicore_lockout_start_blocking(); // get lock
+        int spin = rotary.get_spin();
+        if (spin)
+            led_ctrl.settings.set_config_temp_value(led_ctrl.settings.get_config_temp_value() + spin);
         int right_avg = analog_right.get_avg();
         int right_max = analog_right.get_max();
         int left_avg = analog_left.get_avg();
@@ -52,10 +54,19 @@ void core0()
         rotary.btn.update();
         if (rotary.btn.clicked())
         {
-            // printf("clicked!\n");
+            led_ctrl.settings.update_mode();
+            printf("clicked!\n");
         }
         if (rotary.btn.double_clicked())
         {
+            int mode = led_ctrl.settings.get_mode();
+            if (mode == CONFIG_BRIGHTNESS)
+                led_ctrl.settings.set_max_bright(led_ctrl.settings.get_config_temp_value());
+            else if (mode == CONFIG_SENSITIVITY)
+                led_ctrl.settings.set_sensitivity(led_ctrl.settings.get_config_temp_value());
+
+            else if (mode == CONFIG_VOLUME_THRESH)
+                led_ctrl.settings.set_volume_threshold(led_ctrl.settings.get_config_temp_value());
             led_ctrl.settings.update_mode();
             printf("double clicked!\n");
         }
