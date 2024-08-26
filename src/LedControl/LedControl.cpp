@@ -1,6 +1,6 @@
 #include "LedControl.h"
 
-LedControl::LedControl() : m_leds(), settings(), pio(), m_color()
+LedControl::LedControl() : m_leds(), m_color(), m_counter(0), pio(), settings()
 {
 }
 
@@ -9,7 +9,7 @@ void LedControl::set_buffer()
     // set buffer
     for (int i = 0; i < m_leds.size(); i++)
     {
-        this->pio.buffer[m_leds[i].index()] = m_leds[i].color();
+        pio.buffer[m_leds[i].index()] = m_leds[i].color();
     }
     // update and remove m_leds
     std::vector<int> to_remove;
@@ -33,13 +33,13 @@ void LedControl::clear()
 {
     for (int i = 0; i < NUM_PIXELS; i++)
     {
-        this->pio.buffer[i] = 0;
+        pio.buffer[i] = 0;
     }
 }
 
 void LedControl::update(UPDATE_PARAMS)
 {
-    this->clear();
+    clear();
     Mode mode = settings.get_mode();
     // TODO: replace with map!
     if (mode == SOUND_BAR)
@@ -80,17 +80,17 @@ void LedControl::update_sound_bar(UPDATE_PARAMS)
 void LedControl::update_sound_route(UPDATE_PARAMS)
 {
     if (right_max > settings.get_volume_threshold())
-        this->start(true);
+        start(true);
     if (left_max > settings.get_volume_threshold())
-        this->start(false);
-    this->set_buffer();
+        start(false);
+    set_buffer();
 }
 
 void LedControl::update_random_colors(UPDATE_PARAMS)
 {
-    this->start(true);
-    this->start(false);
-    this->set_buffer();
+    start(true);
+    start(false);
+    set_buffer();
 }
 void LedControl::update_config_brightness(UPDATE_PARAMS)
 {
@@ -103,9 +103,26 @@ void LedControl::update_config_brightness(UPDATE_PARAMS)
 }
 void LedControl::update_config_sensitivity(UPDATE_PARAMS)
 {
+    // printf("temp value is %d\n", settings.get_config_temp_value());
+    int v = NUM_PIXELS * settings.get_config_temp_value() / 100;
+    for (int i = 0; i < v; i++)
+    {
+        int c = i * settings.get_max_bright() / NUM_PIXELS;
+        pio.buffer[i] = (c << 8) | ((settings.get_max_bright() - c) << 16);
+    }
 }
 void LedControl::update_config_volume_thresh(UPDATE_PARAMS)
 {
+    int freq = (NUM_PIXELS * settings.get_config_temp_value() / 100) | 1; // counter / pixel
+    printf("temp value is %d, freq is %d\n", settings.get_config_temp_value(), freq);
+    if (m_counter / freq != 0)
+    {
+        start(true);
+        start(false);
+        m_counter -= freq;
+    }
+    m_counter += 1;
+    set_buffer();
 }
 void LedControl::update_off(UPDATE_PARAMS)
 {

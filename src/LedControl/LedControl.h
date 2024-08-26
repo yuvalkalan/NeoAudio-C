@@ -10,6 +10,7 @@ class LedControl
 private:
 	std::vector<NeoPixelLed> m_leds;
 	Color m_color;
+	int m_counter;
 
 public:
 	NeoPio pio;

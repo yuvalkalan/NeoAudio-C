@@ -1,7 +1,7 @@
 #pragma once
-
 #include "Button/Button.h"
-
+#include "chrono"
+#define ROTARY_SLEEP (1 / 1000.0f) // 1ms
 class Rotary
 {
 private:
@@ -9,6 +9,7 @@ private:
     int m_dt;
     bool m_clk_last_value;
     int m_spin;
+    std::chrono::high_resolution_clock::time_point m_last_run;
 
 public:
     Button btn;
