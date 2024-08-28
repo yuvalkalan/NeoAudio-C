@@ -23,12 +23,14 @@ void SerialIn::update(const Settings &settings)
     }
     if (m_message.length() != 0)
     {
+        if (m_message == "show ?")
+            printf("show:\n\tconfig\n");
         if (m_message == "show config")
         {
             printf("settings: \n");
-            printf("max bright = %d, \n", settings.get_max_bright());
-            printf("sensitivity = %d, \n", settings.get_sensitivity());
-            printf("volume threshold = %d\n", settings.get_volume_threshold());
+            printf("\tmax bright = %d\n", settings.get_max_bright());
+            printf("\tsensitivity = %d\n", settings.get_sensitivity());
+            printf("\tvolume threshold = %d\n", settings.get_volume_threshold());
         }
         printf("message = %s\n", m_message.c_str());
         m_message = "";
