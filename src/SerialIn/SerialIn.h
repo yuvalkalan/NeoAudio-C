@@ -15,9 +15,11 @@ class SerialIn
 {
 private:
     std::string m_message;
+    bool m_show_overloading;
     void reset_bootsel();
 
 public:
     void update(const Settings &settings);
+    bool get_show_overloading() const;
     SerialIn();
 };

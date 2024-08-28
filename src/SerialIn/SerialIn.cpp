@@ -1,13 +1,17 @@
 #include "SerialIn.h"
 
-SerialIn::SerialIn()
+SerialIn::SerialIn() : m_message(""), m_show_overloading(true)
 {
-    m_message = "";
 }
 
 void SerialIn::reset_bootsel()
 {
     reset_usb_boot(0, 0);
+}
+
+bool SerialIn::get_show_overloading() const
+{
+    return m_show_overloading;
 }
 
 void SerialIn::update(const Settings &settings)
@@ -25,13 +29,17 @@ void SerialIn::update(const Settings &settings)
     {
         if (m_message == "show ?")
             printf("show:\n\tconfig\n");
-        if (m_message == "show config")
+        else if (m_message == "show config")
         {
             printf("settings: \n");
             printf("\tmax bright = %d\n", settings.get_max_bright());
             printf("\tsensitivity = %d\n", settings.get_sensitivity());
             printf("\tvolume threshold = %d\n", settings.get_volume_threshold());
         }
+        else if (m_message == "overloading")
+            m_show_overloading = true;
+        else if (m_message == "!overloading")
+            m_show_overloading = false;
         printf("message = %s\n", m_message.c_str());
         m_message = "";
     }

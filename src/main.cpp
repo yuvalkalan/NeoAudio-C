@@ -11,7 +11,7 @@
 #include "Rotary/Rotary.h"
 #include "SerialIn/SerialIn.h"
 
-#define CLOCK_REFRESH_RATE 200  // 200.0
+#define LED_REFRESH_RATE 200    // 200.0
 #define READ_REFRESH_RATE 10000 // 10kHz
 #define GPIO_ANALOG_RIGHT 28    // aux right channel pin
 #define GPIO_ANALOG_LEFT 27     // aux left channel pin
@@ -23,13 +23,15 @@ AnalogRead analog_right(GPIO_ANALOG_RIGHT);
 AnalogRead analog_left(GPIO_ANALOG_LEFT);
 Rotary rotary(GPIO_CLK_PIN, GPIO_DT_PIN, GPIO_BUTTON_PIN);
 LedControl led_ctrl;
+SerialIn srl_in;
+
 void core0()
 {
     BlinkLed led;
-    Clock clk(CLOCK_REFRESH_RATE);
+    Clock clk(LED_REFRESH_RATE);
     multicore_lockout_victim_init();
     led_ctrl.settings.update_mode();
-    auto overloading_timer = std::chrono::high_resolution_clock::now();
+    int overloading_counter = 1;
     while (true)
     {
         led.update();
@@ -72,16 +74,18 @@ void core0()
         led_ctrl.update(right_avg, right_max, left_avg, left_max);
         led_ctrl.pio.write();
         led_ctrl.pio.wait_until_finish();
+        sleep_us(200);
         if (clk.tick() > 0.1)
         {
-            auto current_time = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = current_time - overloading_timer;
-            double elapsed_seconds = elapsed.count();
-            if (elapsed_seconds > 1)
+            if (srl_in.get_show_overloading() && (overloading_counter % LED_REFRESH_RATE == 0))
             {
-                printf("overloading core 0!\n");
-                overloading_timer = current_time;
+                printf("overloading core 0! %d\n", overloading_counter);
             }
+            overloading_counter++;
+        }
+        else
+        {
+            overloading_counter = 1;
         }
     }
 }
@@ -89,9 +93,8 @@ void core0()
 void core1()
 {
     multicore_lockout_victim_init();
-    SerialIn srl_in;
     Clock clk(READ_REFRESH_RATE);
-    auto overloading_timer = std::chrono::high_resolution_clock::now();
+    int overloading_counter = 1;
     while (true)
     {
         multicore_lockout_start_blocking(); // get lock
@@ -102,14 +105,15 @@ void core1()
         multicore_lockout_end_blocking(); // release lock
         if (clk.tick() > 0.1)
         {
-            auto current_time = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = current_time - overloading_timer;
-            double elapsed_seconds = elapsed.count();
-            if (elapsed_seconds > 1)
+            if (srl_in.get_show_overloading() && (overloading_counter % READ_REFRESH_RATE == 0))
             {
-                printf("overloading core 1!\n");
-                overloading_timer = current_time;
+                printf("overloading core 1! %d\n", overloading_counter);
             }
+            overloading_counter++;
+        }
+        else
+        {
+            overloading_counter = 1;
         }
     }
 }
