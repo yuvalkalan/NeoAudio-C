@@ -9,6 +9,7 @@
 #include "BlinkLed/BlinkLed.h"
 #include "AnalogRead/AnalogRead.h"
 #include "Rotary/Rotary.h"
+#include "SerialIn/SerialIn.h"
 
 #define CLOCK_REFRESH_RATE 200  // 200.0
 #define READ_REFRESH_RATE 10000 // 10kHz
@@ -18,19 +19,9 @@
 #define GPIO_DT_PIN 18          // rotary dt pin
 #define GPIO_BUTTON_PIN 16      // rotary button pin
 
-const float brightness = 0.020f;
 AnalogRead analog_right(GPIO_ANALOG_RIGHT);
 AnalogRead analog_left(GPIO_ANALOG_LEFT);
 Rotary rotary(GPIO_CLK_PIN, GPIO_DT_PIN, GPIO_BUTTON_PIN);
-
-// static void shiftArray(int32_t *arr, int32_t size)
-// {
-//     for (int i = 0; i < size - 1; i++)
-//     {
-//         int offset = size - i - 2;
-//         *(long long *)((int *)arr + offset) <<= 32;
-//     }
-// }
 
 void core0()
 {
@@ -89,6 +80,7 @@ void core0()
 void core1()
 {
     multicore_lockout_victim_init();
+    SerialIn srl_in;
     Clock clk(READ_REFRESH_RATE);
     while (true)
     {
@@ -96,6 +88,7 @@ void core1()
         analog_right.read();
         analog_left.read();
         rotary.update();
+        srl_in.update();
         multicore_lockout_end_blocking(); // release lock
         if (clk.tick() > 0.1)
             printf("overloading core 1!\n");
@@ -133,5 +126,23 @@ int main()
 //         {
 //             printf("hold!\n");
 //         }
+//     }
+// }
+
+// #include <stdlib.h>
+// #include <stdio.h>
+// #include "pico/stdlib.h"
+// #include "BlinkLed/BlinkLed.h"
+// #include "SerialIn/SerialIn.h"
+
+// int main()
+// {
+//     stdio_init_all();
+//     SerialIn srl_in;
+//     BlinkLed led;
+//     while (true)
+//     {
+//         srl_in.update();
+//         led.update();
 //     }
 // }

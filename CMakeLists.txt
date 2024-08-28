@@ -28,6 +28,7 @@ target_sources(${PROJECT_NAME} PRIVATE
                 src/Rotary/Button/Button.cpp
                 src/Rotary/Rotary.cpp
                 src/LedControl/NeoPixelLed/Color/Color.cpp
+                src/SerialIn/SerialIn.cpp
                 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
