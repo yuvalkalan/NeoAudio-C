@@ -22,14 +22,14 @@
 AnalogRead analog_right(GPIO_ANALOG_RIGHT);
 AnalogRead analog_left(GPIO_ANALOG_LEFT);
 Rotary rotary(GPIO_CLK_PIN, GPIO_DT_PIN, GPIO_BUTTON_PIN);
-
+LedControl led_ctrl;
 void core0()
 {
     BlinkLed led;
     Clock clk(CLOCK_REFRESH_RATE);
-    LedControl led_ctrl;
     multicore_lockout_victim_init();
     led_ctrl.settings.update_mode();
+    auto overloading_timer = std::chrono::high_resolution_clock::now();
     while (true)
     {
         led.update();
@@ -73,7 +73,16 @@ void core0()
         led_ctrl.pio.write();
         led_ctrl.pio.wait_until_finish();
         if (clk.tick() > 0.1)
-            printf("overloading core 0!\n");
+        {
+            auto current_time = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = current_time - overloading_timer;
+            double elapsed_seconds = elapsed.count();
+            if (elapsed_seconds > 1)
+            {
+                printf("overloading core 0!\n");
+                overloading_timer = current_time;
+            }
+        }
     }
 }
 
@@ -82,16 +91,26 @@ void core1()
     multicore_lockout_victim_init();
     SerialIn srl_in;
     Clock clk(READ_REFRESH_RATE);
+    auto overloading_timer = std::chrono::high_resolution_clock::now();
     while (true)
     {
         multicore_lockout_start_blocking(); // get lock
         analog_right.read();
         analog_left.read();
         rotary.update();
-        srl_in.update();
+        srl_in.update(led_ctrl.settings);
         multicore_lockout_end_blocking(); // release lock
         if (clk.tick() > 0.1)
-            printf("overloading core 1!\n");
+        {
+            auto current_time = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = current_time - overloading_timer;
+            double elapsed_seconds = elapsed.count();
+            if (elapsed_seconds > 1)
+            {
+                printf("overloading core 1!\n");
+                overloading_timer = current_time;
+            }
+        }
     }
 }
 
@@ -103,46 +122,3 @@ int main()
     multicore_launch_core1(core1);
     core0();
 }
-
-// #include "Rotary/Button/Button.h"
-
-// int main()
-// {
-//     stdio_init_all();
-//     sleep_ms(1000);
-//     Button b(16);
-//     while (1)
-//     {
-//         b.update();
-//         if (b.clicked())
-//         {
-//             printf("clicked!\n");
-//         }
-//         if (b.double_clicked())
-//         {
-//             printf("double clicked!\n");
-//         }
-//         if (b.hold_down())
-//         {
-//             printf("hold!\n");
-//         }
-//     }
-// }
-
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include "pico/stdlib.h"
-// #include "BlinkLed/BlinkLed.h"
-// #include "SerialIn/SerialIn.h"
-
-// int main()
-// {
-//     stdio_init_all();
-//     SerialIn srl_in;
-//     BlinkLed led;
-//     while (true)
-//     {
-//         srl_in.update();
-//         led.update();
-//     }
-// }

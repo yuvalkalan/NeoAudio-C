@@ -10,7 +10,7 @@ void SerialIn::reset_bootsel()
     reset_usb_boot(0, 0);
 }
 
-void SerialIn::update()
+void SerialIn::update(const Settings &settings)
 {
     // Check to see if anything is available in the serial receive buffer
     while (tud_cdc_available())
@@ -18,12 +18,19 @@ void SerialIn::update()
         char chr = getchar();
         if (chr == CTRL_C)
             reset_bootsel();
-        printf("char is %c (value=%d)\n", chr, chr);
+        // printf("char is %c (value=%d)\n", chr, chr);
         m_message += chr;
     }
     if (m_message.length() != 0)
     {
-        printf("message = %s", m_message.c_str());
+        if (m_message == "show config")
+        {
+            printf("settings: \n");
+            printf("max bright = %d, \n", settings.get_max_bright());
+            printf("sensitivity = %d, \n", settings.get_sensitivity());
+            printf("volume threshold = %d\n", settings.get_volume_threshold());
+        }
+        printf("message = %s\n", m_message.c_str());
         m_message = "";
     }
 }

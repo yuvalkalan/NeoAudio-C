@@ -4,6 +4,7 @@
 #include <string>
 #include "pico/bootrom.h"
 #include <stdio.h>
+#include "../LedControl/Settings/Settings.h"
 
 #define CTRL_C 3
 #define CTRL_D 4
@@ -17,6 +18,6 @@ private:
     void reset_bootsel();
 
 public:
-    void update();
+    void update(const Settings &settings);
     SerialIn();
 };

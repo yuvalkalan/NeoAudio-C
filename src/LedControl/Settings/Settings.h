@@ -61,16 +61,16 @@ private:
     // file operation
     void read();
     void write();
-    bool exist();
+    bool exist() const;
 
 public:
     Settings();
     // getters
-    Mode get_mode();
-    uint8_t get_config_temp_value();
-    int get_volume_threshold();
-    int get_max_bright();
-    int get_sensitivity();
+    Mode get_mode() const;
+    uint8_t get_config_temp_value() const;
+    int get_volume_threshold() const;
+    int get_max_bright() const;
+    int get_sensitivity() const;
     // setters
     void reset();
     void update_mode();

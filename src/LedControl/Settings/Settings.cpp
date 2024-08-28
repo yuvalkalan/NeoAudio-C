@@ -40,11 +40,11 @@ void Settings::write()
     restore_interrupts(ints);
     enable_usb(true);
 }
-bool Settings::exist()
+bool Settings::exist() const
 {
     return settings_flash_buffer[SETTINGS_EXIST_OFFSET] == 1;
 }
-Mode Settings::get_mode()
+Mode Settings::get_mode() const
 {
     return m_mode;
 }
@@ -73,21 +73,21 @@ void Settings::reset()
     m_sensitivity = DEF_SENSITIVITY;
     m_volume_threshold = DEF_VOLUME_THRESHOLD;
 }
-uint8_t Settings::get_config_temp_value()
+uint8_t Settings::get_config_temp_value() const
 {
     return m_config_temp_value;
 }
-int Settings::get_volume_threshold()
+int Settings::get_volume_threshold() const
 {
     // return volumn threshold between 0 and MAX_VOLUME_THRESHOLD
     return m_volume_threshold / 100.0f * MAX_VOLUME_THRESHOLD;
 }
-int Settings::get_max_bright()
+int Settings::get_max_bright() const
 {
     // return brightness between 0 and MAX_BRIGHTNESS
     return m_max_bright / 100.0f * MAX_BRIGHTNESS;
 }
-int Settings::get_sensitivity()
+int Settings::get_sensitivity() const
 {
     // return sensitivity between 0 and MAX_SENSITIVITY
     return m_sensitivity / 100.0f * MAX_SENSITIVITY;
