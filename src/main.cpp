@@ -30,7 +30,6 @@ void core0()
     BlinkLed led;
     Clock clk(LED_REFRESH_RATE);
     multicore_lockout_victim_init();
-    led_ctrl.settings.update_mode();
     int overloading_counter = 1;
     while (true)
     {

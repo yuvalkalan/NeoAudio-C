@@ -18,7 +18,10 @@ uint32_t NeoPixelLed::color() const
 
 int NeoPixelLed::index() const
 {
-	return m_rtl ? m_index : NUM_PIXELS - m_index - 1;
+	// center -> edge
+	return NUM_PIXELS / 2 + (m_rtl ? (-m_index) : m_index);
+	// edge -> center
+	// return m_rtl ? m_index : NUM_PIXELS - m_index - 1;
 }
 
 bool NeoPixelLed::alive() const

@@ -59,7 +59,7 @@ void LedControl::update_sound_bar(UPDATE_PARAMS)
     for (int i = 0; i < right_value; i++)
     {
         int c = i * settings.get_max_bright() / (NUM_PIXELS / 2);
-        pio.buffer[i] = (c << 8) | ((settings.get_max_bright() - c) << 16);
+        pio.buffer[NUM_PIXELS / 2 - 1 - i] = (c << 8) | (settings.get_max_bright() - c);
     }
     // left
     int left_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * left_avg / 65535);
@@ -68,7 +68,7 @@ void LedControl::update_sound_bar(UPDATE_PARAMS)
     for (int i = 0; i < left_value; i++)
     {
         int c = i * settings.get_max_bright() / (NUM_PIXELS / 2);
-        pio.buffer[NUM_PIXELS - 1 - i] = (c << 8) | ((settings.get_max_bright() - c) << 16);
+        pio.buffer[NUM_PIXELS / 2 + i] = (c << 8) | (settings.get_max_bright() - c);
     }
 }
 void LedControl::update_sound_route(UPDATE_PARAMS)
