@@ -4,6 +4,7 @@
 #include <pico/stdlib.h>
 #include "hardware/flash.h"
 #include "hardware/sync.h"
+#include <cmath>
 // settings flash buffer location
 #define SETTINGS_WRITE_START (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE)
 #define SETTINGS_READ_START (SETTINGS_WRITE_START + XIP_BASE)
@@ -22,7 +23,7 @@
 #define SETTINGS_EXIST_OFFSET 0
 #define SETTINGS_MAX_BRIGHT_OFFSET 1
 #define SETTINGS_SENSITIVITY_OFFSET 2
-#define SETTINGS_VOLUMN_THRESHOLD_OFFSET 3
+#define SETTINGS_VOLUME_THRESHOLD_OFFSET 3
 // ---------------------------------------------------------------------------
 static const uint8_t *settings_flash_buffer = (const uint8_t *)SETTINGS_READ_START;
 void enable_usb(bool enable);
@@ -56,6 +57,7 @@ private:
     uint8_t m_sensitivity;
     uint8_t m_volume_threshold;
     uint8_t m_config_temp_value;
+    uint8_t m_machine_volume;
 
 private:
     // file operation
@@ -78,4 +80,5 @@ public:
     void set_volume_threshold(int value);
     void set_max_bright(int value);
     void set_sensitivity(int value);
+    void set_machine_volume(int value);
 };

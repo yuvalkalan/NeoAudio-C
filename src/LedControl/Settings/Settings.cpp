@@ -8,7 +8,7 @@ void enable_usb(bool enable)
 void enable_usb(bool enable) {}
 #endif
 
-Settings::Settings() : m_mode(Mode::SOUND_BAR), m_max_bright(DEF_MAX_BRIGHT), m_sensitivity(DEF_SENSITIVITY), m_volume_threshold(DEF_VOLUME_THRESHOLD), m_config_temp_value(0)
+Settings::Settings() : m_mode(Mode::SOUND_BAR), m_max_bright(DEF_MAX_BRIGHT), m_sensitivity(DEF_SENSITIVITY), m_volume_threshold(DEF_VOLUME_THRESHOLD), m_config_temp_value(0), m_machine_volume(100)
 {
     if (exist())
     {
@@ -24,7 +24,7 @@ void Settings::read()
 {
     m_max_bright = settings_flash_buffer[SETTINGS_MAX_BRIGHT_OFFSET];
     m_sensitivity = settings_flash_buffer[SETTINGS_SENSITIVITY_OFFSET];
-    m_volume_threshold = settings_flash_buffer[SETTINGS_VOLUMN_THRESHOLD_OFFSET];
+    m_volume_threshold = settings_flash_buffer[SETTINGS_VOLUME_THRESHOLD_OFFSET];
 }
 void Settings::write()
 {
@@ -32,7 +32,7 @@ void Settings::write()
     data[SETTINGS_EXIST_OFFSET] = 1;
     data[SETTINGS_MAX_BRIGHT_OFFSET] = m_max_bright;
     data[SETTINGS_SENSITIVITY_OFFSET] = m_sensitivity;
-    data[SETTINGS_VOLUMN_THRESHOLD_OFFSET] = m_volume_threshold;
+    data[SETTINGS_VOLUME_THRESHOLD_OFFSET] = m_volume_threshold;
     enable_usb(false);
     uint32_t ints = save_and_disable_interrupts();
     flash_range_erase(SETTINGS_WRITE_START, FLASH_SECTOR_SIZE);
@@ -79,20 +79,24 @@ uint8_t Settings::get_config_temp_value() const
 }
 int Settings::get_volume_threshold() const
 {
-    // return volumn threshold between 0 and MAX_VOLUME_THRESHOLD
+    // return volume threshold between 0 and MAX_VOLUME_THRESHOLD
     return m_volume_threshold / 100.0f * MAX_VOLUME_THRESHOLD;
+
+    // TODO: fix to machine volume
+    // return (m_volume_threshold / 100.0f) * MAX_VOLUME_THRESHOLD * std::pow((m_machine_volume / 100.0f), 2); // don't know why power 2 but it works
 }
 int Settings::get_max_bright() const
 {
     // return brightness between 0 and MAX_BRIGHTNESS
-    return m_max_bright / 100.0f * MAX_BRIGHTNESS;
+    return (m_max_bright / 100.0f) * MAX_BRIGHTNESS;
 }
 int Settings::get_sensitivity() const
 {
     // return sensitivity between 0 and MAX_SENSITIVITY
     return m_sensitivity / 100.0f * MAX_SENSITIVITY;
+    // TODO: fix to machine volume
+    // return (m_sensitivity / 100.0f) * MAX_SENSITIVITY * (100.0f / m_machine_volume);
 }
-
 void Settings::set_config_temp_value(int value)
 {
     m_config_temp_value = fix_percent(value);
@@ -111,4 +115,8 @@ void Settings::set_sensitivity(int value)
 {
     m_sensitivity = fix_percent(value);
     write();
+}
+void Settings::set_machine_volume(int value)
+{
+    m_machine_volume = value;
 }
