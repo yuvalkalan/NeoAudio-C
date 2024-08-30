@@ -11,7 +11,7 @@
 #include "Rotary/Rotary.h"
 #include "SerialIn/SerialIn.h"
 
-#define LED_REFRESH_RATE 200    // 200.0
+#define LED_REFRESH_RATE 200    // 200.0 Hz
 #define READ_REFRESH_RATE 10000 // 10kHz
 #define GPIO_ANALOG_RIGHT 28    // aux right channel pin
 #define GPIO_ANALOG_LEFT 27     // aux left channel pin
@@ -70,10 +70,9 @@ void core0()
         }
         multicore_lockout_end_blocking(); // release lock
 
+        led_ctrl.pio.wait_until_finish();
         led_ctrl.update(right_avg, right_max, left_avg, left_max);
         led_ctrl.pio.write();
-        led_ctrl.pio.wait_until_finish();
-        sleep_us(200);
         if (clk.tick() > 0.1)
         {
             if (srl_in.get_show_overloading() && (overloading_counter % LED_REFRESH_RATE == 0))

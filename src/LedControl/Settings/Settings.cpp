@@ -80,10 +80,10 @@ uint8_t Settings::get_config_temp_value() const
 int Settings::get_volume_threshold() const
 {
     // return volume threshold between 0 and MAX_VOLUME_THRESHOLD
-    return m_volume_threshold / 100.0f * MAX_VOLUME_THRESHOLD;
+    // return m_volume_threshold / 100.0f * MAX_VOLUME_THRESHOLD;
 
     // TODO: fix to machine volume
-    // return (m_volume_threshold / 100.0f) * MAX_VOLUME_THRESHOLD * std::pow((m_machine_volume / 100.0f), 2); // don't know why power 2 but it works
+    return (m_volume_threshold / 100.0f) * MAX_VOLUME_THRESHOLD * std::pow((m_machine_volume / 100.0f), 2); // use the current machine volume. don't know why power 2 but it works (tested)
 }
 int Settings::get_max_bright() const
 {
@@ -93,9 +93,8 @@ int Settings::get_max_bright() const
 int Settings::get_sensitivity() const
 {
     // return sensitivity between 0 and MAX_SENSITIVITY
-    return m_sensitivity / 100.0f * MAX_SENSITIVITY;
-    // TODO: fix to machine volume
-    // return (m_sensitivity / 100.0f) * MAX_SENSITIVITY * (100.0f / m_machine_volume);
+    // return m_sensitivity / 100.0f * MAX_SENSITIVITY;
+    return (m_sensitivity / 100.0f) * MAX_SENSITIVITY * 100.0f / (m_machine_volume + 0.01); // use the current machine volume
 }
 void Settings::set_config_temp_value(int value)
 {

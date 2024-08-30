@@ -3,7 +3,6 @@
 LedControl::LedControl() : m_leds(), m_color(), m_counter(0), pio(), settings()
 {
 }
-
 void LedControl::set_buffer()
 {
     // set buffer
@@ -17,12 +16,10 @@ void LedControl::set_buffer()
                                 { return !obj.update(); }),
                  m_leds.end());
 }
-
 void LedControl::start(bool rtl)
 {
     m_leds.push_back({m_color.get(COLOR_DURATION, settings.get_max_bright()), rtl});
 }
-
 void LedControl::clear()
 {
     for (int i = 0; i < NUM_PIXELS; i++)
@@ -30,7 +27,6 @@ void LedControl::clear()
         pio.buffer[i] = 0;
     }
 }
-
 void LedControl::update(UPDATE_PARAMS)
 {
     clear();
@@ -79,7 +75,6 @@ void LedControl::update_sound_route(UPDATE_PARAMS)
         start(false);
     set_buffer();
 }
-
 void LedControl::update_random_colors(UPDATE_PARAMS)
 {
     start(true);
