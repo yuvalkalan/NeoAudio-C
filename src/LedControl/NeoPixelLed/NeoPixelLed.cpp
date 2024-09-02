@@ -19,7 +19,7 @@ uint32_t NeoPixelLed::color() const
 int NeoPixelLed::index() const
 {
 	// center -> edge
-	return NUM_PIXELS / 2 + (m_rtl ? (-m_index) : m_index);
+	return NUM_PIXELS / 2 + (m_rtl ? (-m_index - 1) : m_index);
 	// edge -> center
 	// return m_rtl ? m_index : NUM_PIXELS - m_index - 1;
 }
