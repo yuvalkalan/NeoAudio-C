@@ -21,3 +21,9 @@ double Clock::tick()
 
 	return m_delta;
 }
+
+void Clock::set_refresh_rate(double refresh_rate)
+{
+	m_refresh_rate = refresh_rate;
+	m_frequency = 1.0 / refresh_rate;
+}

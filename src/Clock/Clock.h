@@ -11,6 +11,6 @@ private:
 
 public:
 	Clock(double refresh_rate);
-
 	double tick();
+	void set_refresh_rate(double refresh_rate);
 };
