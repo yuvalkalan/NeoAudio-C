@@ -98,7 +98,6 @@ void core1()
         multicore_lockout_start_blocking(); // get lock
         analog_right.read();
         analog_left.read();
-        rotary.update();
         srl_in.update(led_ctrl.settings);
         multicore_lockout_end_blocking(); // release lock
         if (clk.tick() > 0.1)

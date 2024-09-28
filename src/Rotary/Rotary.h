@@ -1,21 +1,23 @@
 #pragma once
 #include "Button/Button.h"
-#include "chrono"
-#define ROTARY_SLEEP (1 / 1000.0f) // 1ms
-class Rotary
+
+class Rotary // this is singleton, use only once!
 {
 private:
-    int m_clk;
-    int m_dt;
-    bool m_clk_last_value;
-    int m_spin;
-    std::chrono::high_resolution_clock::time_point m_last_run;
+    uint m_clk;
+    uint m_dt;
+    volatile bool m_last_clk;
+    volatile int m_spin;
+    static Rotary *instance;
 
 public:
     Button btn;
 
+private:
+    static void encoder_callback(uint gpio, uint32_t events);
+    static Rotary *getInstance();
+
 public:
     Rotary(int clk, int dt, int button);
-    void update();
     int get_spin();
 };

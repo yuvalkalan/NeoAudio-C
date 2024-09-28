@@ -1,29 +1,43 @@
 #include "Rotary.h"
 #include <stdio.h>
-Rotary::Rotary(int clk, int dt, int button) : m_clk(clk), m_dt(dt), m_clk_last_value(false), m_spin(0), m_last_run(std::chrono::high_resolution_clock::now()), btn(button)
+
+Rotary *Rotary::instance = nullptr; // Define the static instance variable
+
+void Rotary::encoder_callback(uint gpio, uint32_t events)
 {
+    Rotary *instance = getInstance(); // Get the current instance
+    bool current_clk = gpio_get(instance->m_clk);
+    bool current_dt = gpio_get(instance->m_dt);
+    if (current_clk != instance->m_last_clk) // A pin state changed
+        if (current_clk == current_dt)
+            instance->m_spin++; // Clockwise
+        else
+            instance->m_spin--;         // Counter-clockwise
+    instance->m_last_clk = current_clk; // Update last state
+    printf("clk is %d\n", instance->m_clk);
+    printf("dt is %d\n", instance->m_dt);
+
+    printf("new value is %d\n", instance->m_spin);
 }
 
-void Rotary::update()
+Rotary *Rotary::getInstance()
 {
-    auto current_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = current_time - m_last_run;
-    double elapsed_seconds = elapsed.count();
-    if (elapsed_seconds > ROTARY_SLEEP)
-    {
-        bool clk_state = gpio_get(m_clk);
-        bool dt_state = gpio_get(m_dt);
-        if ((!clk_state) && m_clk_last_value)
-        {
-            if (dt_state)
-                m_spin -= 1;
-            else
-                m_spin += 1;
-        }
-        m_clk_last_value = clk_state;
-        m_last_run = current_time;
-    }
+    return instance;
 }
+
+Rotary::Rotary(int clk, int dt, int button) : m_clk(clk), m_dt(dt), m_last_clk(false), m_spin(0), btn(button)
+{
+    gpio_init(clk);
+    gpio_set_dir(clk, GPIO_IN);
+    gpio_pull_up(clk);
+    gpio_init(dt);
+    gpio_set_dir(dt, GPIO_IN);
+    gpio_pull_up(dt);
+    m_last_clk = gpio_get(clk);
+    gpio_set_irq_enabled_with_callback(clk, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &encoder_callback);
+    Rotary::instance = this;
+}
+
 int Rotary::get_spin()
 {
     int v = m_spin;
