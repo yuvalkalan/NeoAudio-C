@@ -1,5 +1,4 @@
 #include "Rotary.h"
-#include <stdio.h>
 
 Rotary *Rotary::instance = nullptr; // Define the static instance variable
 
@@ -8,16 +7,12 @@ void Rotary::encoder_callback(uint gpio, uint32_t events)
     Rotary *instance = getInstance(); // Get the current instance
     bool current_clk = gpio_get(instance->m_clk);
     bool current_dt = gpio_get(instance->m_dt);
-    if (current_clk != instance->m_last_clk) // A pin state changed
+    if (current_dt && current_clk != instance->m_last_clk) // A pin state changed
         if (current_clk == current_dt)
             instance->m_spin++; // Clockwise
         else
             instance->m_spin--;         // Counter-clockwise
     instance->m_last_clk = current_clk; // Update last state
-    printf("clk is %d\n", instance->m_clk);
-    printf("dt is %d\n", instance->m_dt);
-
-    printf("new value is %d\n", instance->m_spin);
 }
 
 Rotary *Rotary::getInstance()
