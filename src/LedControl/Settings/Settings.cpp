@@ -90,7 +90,7 @@ int Settings::get_max_bright() const
     // return brightness between 0 and MAX_BRIGHTNESS
     return (m_max_bright / 100.0f) * MAX_BRIGHTNESS;
 }
-int Settings::get_sensitivity() const
+float Settings::get_sensitivity() const
 {
     // return sensitivity between 0 and MAX_SENSITIVITY
     // return m_sensitivity / 100.0f * MAX_SENSITIVITY;

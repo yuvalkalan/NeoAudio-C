@@ -22,7 +22,7 @@ void SerialIn::show_command(Settings &settings, const std::string &param)
     {
         printf("settings: \n");
         printf("\tmax bright = %d\n", settings.get_max_bright());
-        printf("\tsensitivity = %d\n", settings.get_sensitivity());
+        printf("\tsensitivity = %f\n", settings.get_sensitivity());
         printf("\tvolume threshold = %d\n", settings.get_volume_threshold());
     }
     else

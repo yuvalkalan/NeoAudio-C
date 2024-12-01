@@ -10,13 +10,13 @@
 #define SETTINGS_READ_START (SETTINGS_WRITE_START + XIP_BASE)
 // ---------------------------------------------------------------------------
 // max settings configuration
-#define MAX_SENSITIVITY 100
+#define MAX_SENSITIVITY 5
 #define MAX_BRIGHTNESS 255
 #define MAX_VOLUME_THRESHOLD 65535
 // ---------------------------------------------------------------------------
 // default settings configuration (percents from max)
 #define DEF_MAX_BRIGHT 20
-#define DEF_SENSITIVITY 30
+#define DEF_SENSITIVITY 35
 #define DEF_VOLUME_THRESHOLD 12
 // ---------------------------------------------------------------------------
 // settings file contant offsets
@@ -72,7 +72,7 @@ public:
     uint8_t get_config_temp_value() const;
     int get_volume_threshold() const;
     int get_max_bright() const;
-    int get_sensitivity() const;
+    float get_sensitivity() const;
     // setters
     void reset();
     void update_mode();
