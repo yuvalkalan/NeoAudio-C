@@ -11,7 +11,7 @@
 #include "Rotary/Rotary.h"
 #include "SerialIn/SerialIn.h"
 
-#define LED_REFRESH_RATE 200    // 200.0 Hz
+#define LED_REFRESH_RATE 60     // 200.0 Hz
 #define READ_REFRESH_RATE 10000 // 10kHz
 #define GPIO_ANALOG_RIGHT 28    // aux right channel pin
 #define GPIO_ANALOG_LEFT 27     // aux left channel pin
@@ -48,6 +48,7 @@ void core0()
         if (rotary.btn.clicked())
         {
             led_ctrl.settings.update_mode();
+            led_ctrl.clear_buffer();
             printf("clicked!\n");
         }
         if (rotary.btn.double_clicked())

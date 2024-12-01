@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 #define COLOR_DURATION 0.2
+#define MIC_MIN_VOLUME 2000
+#define MIC_MAX_VOLUME 18000
 #define UPDATE_PARAMS int right_avg, int right_max, int left_avg, int left_max
 #define UPDATE_VALUES right_avg, right_max, left_avg, left_max
 class LedControl
@@ -31,5 +33,6 @@ private:
 
 public:
 	LedControl();
+	void clear_buffer();
 	void update(UPDATE_PARAMS);
 };

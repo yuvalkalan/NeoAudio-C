@@ -4,7 +4,7 @@
 #include "hardware/dma.h"
 #include "NeoPio.pio.h"
 
-#define NUM_PIXELS 144
+#define NUM_PIXELS (144 + 60 * 5)
 #define LEDS_DMA_CHANNEL 0
 #define LEDS_SM 0
 #define LEDS_GPIO_PIN 0

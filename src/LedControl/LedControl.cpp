@@ -27,6 +27,10 @@ void LedControl::clear()
         pio.buffer[i] = 0;
     }
 }
+void LedControl::clear_buffer()
+{
+    m_leds.clear();
+}
 void LedControl::update(UPDATE_PARAMS)
 {
     clear();
@@ -50,17 +54,27 @@ void LedControl::update(UPDATE_PARAMS)
 void LedControl::update_sound_bar(UPDATE_PARAMS)
 {
     // right
-    int right_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * right_avg / 65535);
+    float right_precent = (float)(right_max - MIC_MIN_VOLUME) / (MIC_MAX_VOLUME - MIC_MIN_VOLUME); // right volume precent (number between 0 and 1)
+    int right_value = (settings.get_sensitivity() * right_precent * (NUM_PIXELS / 2));             // sensitivity (0-MAX_SENSITIVITY) * right_precent (0-1) * (NUM_PIXELS / 2)
     right_value = right_value > (NUM_PIXELS / 2) ? (NUM_PIXELS / 2) : right_value;
+
+    // right
+    // int right_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * right_avg / 65535);
+    // right_value = right_value > (NUM_PIXELS / 2) ? (NUM_PIXELS / 2) : right_value;
     for (int i = 0; i < right_value; i++)
     {
         int c = i * settings.get_max_bright() / (NUM_PIXELS / 2);
         pio.buffer[NUM_PIXELS / 2 - 1 - i] = (c << 8) | (settings.get_max_bright() - c);
     }
     // left
-    int left_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * left_avg / 65535);
-    // printf("left value is %d", left_value);
+    float left_precent = (float)(left_max - MIC_MIN_VOLUME) / (MIC_MAX_VOLUME - MIC_MIN_VOLUME); // left volume precent (number between 0 and 1)
+    int left_value = (settings.get_sensitivity() * left_precent * (NUM_PIXELS / 2));             // sensitivity (0-MAX_SENSITIVITY) * right_precent (0-1) * (NUM_PIXELS / 2)
     left_value = left_value > (NUM_PIXELS / 2) ? (NUM_PIXELS / 2) : left_value;
+
+    // // left
+    // int left_value = (settings.get_sensitivity() * (NUM_PIXELS / 2) * left_avg / 65535);
+    // // printf("left value is %d", left_value);
+    // left_value = left_value > (NUM_PIXELS / 2) ? (NUM_PIXELS / 2) : left_value;
     for (int i = 0; i < left_value; i++)
     {
         int c = i * settings.get_max_bright() / (NUM_PIXELS / 2);
